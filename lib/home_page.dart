@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui_design_class/rest_api_service.dart';
+import 'package:ui_design_class/user_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,8 +38,20 @@ class _HomePageState extends State<HomePage> {
                     return ListView.builder(
                       itemCount: snapShot.data?.length ?? 0 ,
                       itemBuilder: (context,index){
-                        return GestureDetector(
-                          onTap:(){} ,
+                        return InkWell(
+                          onTap:(){
+                            if (user != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserScreen(
+                                    user: user,
+                                  ),
+                                ),
+                              );
+                            }
+
+                          } ,
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -56,6 +69,13 @@ class _HomePageState extends State<HomePage> {
                             child: ListTile(
                               title: Text( snapShot.data?[index].name ?? '',style: TextStyle(fontSize: 18,color: Colors.black),),
                               subtitle: Text( snapShot.data?[index].city ?? '',style: TextStyle(fontSize: 18,color: Colors.black),),
+                              leading: ClipOval(
+                                child: Image.network(snapShot.data?[index].image ?? '',fit:BoxFit.cover,width: 60,height: 60,),
+                              ),
+                              trailing: IconButton(
+                                onPressed: (){},
+                                icon: Icon(Icons.favorite_border),
+                              ),
                             ),
                           ),
                         );
