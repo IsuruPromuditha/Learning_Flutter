@@ -103,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
   }
   void loginButtonClick(){
     if(_usernameController.text == 'user123' && _userpasswordController.text == '12345'){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) => HomePage(username:_usernameController.text,) ));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) => HomePage() ));
     }
     else{
       print('Login Fail');

@@ -1,88 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ui_design_class/login_page.dart';
-import 'package:ui_design_class/splash_page.dart';
+import 'package:ui_design_class/rest_api_service.dart';
 
 class HomePage extends StatefulWidget {
-  final String username;
-
-  const HomePage({super.key, required this.username});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> data = ['Monday', 'Tuesday','Wednesday','Thursday','Friday','Monday', 'Tuesday','Wednesday','Thursday','Friday'];
+
+  final apiService = RestAPIService();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    apiService.getUsers();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor:Colors.black,
         title: Text('Home Page',style: TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),),
-        leading: Icon(
-          Icons.account_balance,
-          color: Colors.white,
-        ),
-      ),
+        ),),),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              child: Center(
-                child: Text('Welcome ${widget.username}',
-                  style: TextStyle(fontSize: 30),
-                ),
-              ),
-            ),
-            Expanded(
-                child: ListView.builder(
-                  itemCount: data.length,
-
-              itemBuilder: (context,index) {
-                    return Container(
-                      margin: EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.4),
-                            spreadRadius: 3,
-                            blurRadius: 3,
+            Expanded(child: FutureBuilder(
+              future:apiService.getUsers() ,
+              builder: (context,snapShot){
+                if(snapShot.hasData)
+                  {
+                    return ListView.builder(
+                      itemCount: snapShot.data?.length ?? 0 ,
+                      itemBuilder: (context,index){
+                        return GestureDetector(
+                          onTap:(){} ,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 3,
+                                  spreadRadius: 3,
+                                  color: Colors.grey.withOpacity(0.3)
+                                )
+                              ]
+                            ),
+                            margin: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                            child: ListTile(
+                              title: Text( snapShot.data?[index].name ?? '',style: TextStyle(fontSize: 18,color: Colors.black),),
+                              subtitle: Text( snapShot.data?[index].city ?? '',style: TextStyle(fontSize: 18,color: Colors.black),),
+                            ),
                           ),
-                        ]
-                      ),
-                      child:ListTile(
-                        leading: Icon(Icons.calendar_today,color: Colors.orange,),
-                        title: Text(data[index] ,style: TextStyle(color: Colors.black),),
-                        subtitle: Text('Days',style: TextStyle(color: Colors.black),),
-                        trailing: IconButton(icon: Icon(Icons.delete),color: Colors.red,onPressed:(){} ,),
-                      ) ,
+                        );
+                      },
                     );
 
+                  }else{
+                  return Container(
+                    child: Center(
+                      child: Text(
+                        'Loading....',style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                      ),
+                      ),
+                    ),
+                  );
+                }
               },
-
-            )),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 40),
-              child: ElevatedButton(
-                onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
-                },
-                child: Text('Log out'),
-              ),
-            ),
-
+            ))
           ],
         ),
       ),
+
+
     );
   }
 }
